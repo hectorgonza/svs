@@ -2,7 +2,7 @@ import Election from ".Election.json"
 import ElectionFactory from "./ElectionFactory.json"
 
 export const electionABI = Election.abi
-export const electionAddress = '0x82595e185867cBA99FDe9C865B2a52cC1a7882cB'
+export const electionAddress = '0x047Aebfa5702b7577dc4F81E6BBc65c8C6580C66'
 
 export const electionFactoryABI = ElectionFactory.abi
-export const electionFactoryAddress = '0x691Dc4e8AB21440a7a8defFdea24497C80cE9Fa4'
+export const electionFactoryAddress = '0x86C84dA29c017cdfA99b0bf2468336ff4e9Ed9e3'

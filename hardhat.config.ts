@@ -18,17 +18,17 @@ const config: HardhatUserConfig = {
   solidity: "0.8.10",
   networks: {
     hardhat: {},
-    /* mumbai: { // Remove comment and add key in env/.env file to deploy contracts in Mumbai.
+     mumbai: { // Remove comment and add key in env/.env file to deploy contracts in Mumbai.
       url: "https://rpc-mumbai.maticvigil.com",
       // @ts-ignore
       accounts: [
         MUMBAI_PRIVATE_KEY,
       ],
-    }, */
+    }, 
   },
-  /* etherscan: {  // Remove comment and add key in env/.env file to verify contracts.
+   etherscan: {  // Remove comment and add key in env/.env file to verify contracts.
     apiKey: ETHERSCAN_API_KEY,
-  }, */
+  }, 
   paths: {
     sources: "./contracts",
     tests: "./test",
