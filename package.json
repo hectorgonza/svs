@@ -64,6 +64,7 @@
     "@nomicfoundation/solidity-analyzer-win32-x64-msvc": "^0.1.0",
     "@openzeppelin/contracts": "^4.4.1",
     "big-integer": "^1.6.51",
-    "bn.js": "^5.2.1"
+    "bn.js": "^5.2.1",
+    "node-sass": "^8.0.0"
   }
 }

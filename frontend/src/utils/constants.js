@@ -1,8 +1,8 @@
-import Election from ".Election.json"
+import Election from "./Election.json"
 import ElectionFactory from "./ElectionFactory.json"
 
 export const electionABI = Election.abi
-export const electionAddress = '0x047Aebfa5702b7577dc4F81E6BBc65c8C6580C66'
+export const electionAddress = '0x74b7e77B846a37907eA7e31577080Dd88F3E9E4f'
 
 export const electionFactoryABI = ElectionFactory.abi
-export const electionFactoryAddress = '0x86C84dA29c017cdfA99b0bf2468336ff4e9Ed9e3'
+export const electionFactoryAddress = '0x5083C2365A834E43616b7f03Ee78d71af0a3df4F'

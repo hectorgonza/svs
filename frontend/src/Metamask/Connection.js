@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-
+import {Button, Alert, Container} from "react-bootstrap" 
 import { ethers } from "ethers";
 
 class Metamask extends Component {
@@ -20,20 +20,20 @@ class Metamask extends Component {
   renderMetamask() {
     if (!this.state.selectedAddress) {
       return (
-        <button onClick={() => this.connectToMetamask()}>Connect to Metamask</button>
+        <Button  onClick={() => this.connectToMetamask()}>Connect to Metamask</Button>
       )
     } else {
       return (
-        <p>Welcome {this.state.selectedAddress}</p>
+        <Alert varaiant="dark" key="dark">Welcome {this.state.selectedAddress}</Alert>
       );
     }
   }
 
   render() {
     return(
-      <div>
+      <Container  classname="p-4  ">
         {this.renderMetamask()}
-      </div>
+      </Container>
     )
   }
 }

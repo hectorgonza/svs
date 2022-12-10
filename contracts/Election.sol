@@ -15,7 +15,7 @@ contract Election {
     uint256 byteSizeVoteEncoding;
     uint256 byteSizeHashEncoding;
 
-    Candidate[] candidates;
+    Candidate[] public candidates;
     Candidate public winner;
     mapping (address => Vote) public votes;
     event NewVote(address voter, bytes hash, string candidate);
