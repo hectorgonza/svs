@@ -5,13 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import './App.scss';
-import { Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Router>
+    <BrowserRouter>
       <App></App>
-    </Router>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
