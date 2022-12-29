@@ -1,33 +1,41 @@
-
-import Metamask from './Metamask/Connection';
-import { Route, Navigate, Routes } from 'react-router-dom';
-
+import { Routes,  Route, Navigate, useLocation  } from 'react-router-dom';
 import Auth from './Metamask/Auth';
+import Home from './Views/Home';
+import LoginPage from './Metamask/LoginPage';
 
-function App() {
+function PrivateRoute({ component: Component, ...rest }) {
   return (
-    <div className="App" >
-      <Routes>
-      <Route
-          path="/login"
-          element={Auth.isLoggedIn() ? <Navigate to="/" /> : <Metamask/>}
-        />
-      <Route
-        path="/"
-        render={() => {
-          // Check if the user is logged in
-          if (Auth.isLoggedIn) {
-            // If the user is logged in, render the specified component
-            return <h1>Loggin</h1>
-          } else {
-            // If the user is not logged in, redirect to the login page
-            return <Navigate to="/login" />;
-          }
-        }}
-      />
-    </Routes>
-    </div>
+    <Route
+      {...rest}
+      render={props =>
+        Auth.isLoggedIn ? (
+          <Component {...props} />
+        ) : (
+          <Navigate to="/login" />
+        )
+      }
+    />
   );
 }
 
-export default App;
+export default function App() {
+  const location = useLocation();
+
+    return (
+      <Routes>
+        <Route exact path="/login">
+          <LoginPage />
+        </Route>
+        <PrivateRoute exact path="/">
+          <Home />
+        </PrivateRoute>
+        <PrivateRoute exact path="/home" component={Home} />
+        <Navigate from="/" to="/home" />
+      
+        {console.log(location.pathname)}
+      </Routes>
+    );
+  
+    
+
+}

@@ -1,0 +1,1 @@
+export default function Home() {return (<p>Hola loko</p>)}

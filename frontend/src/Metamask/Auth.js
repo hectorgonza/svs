@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
-import LoginPage from './LoginPage';
+import LoginPage from './LoginPage.js';
+import Home from "../Views/Home";
 
-function Auth() {
+export default function Auth() {
   // Initialize the state variables to store the user's Ethereum address and login status
   const [userAddress, setUserAddress] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -51,9 +52,10 @@ function Auth() {
 
   if (isLoggedIn) {
     // If the user is logged in, render the main page of the app
-    return <LoginPage />;
+    return <Home />;
   } else {
     // If the user is not logged in, render the login page
     return <LoginPage />;
    }
 }
+
