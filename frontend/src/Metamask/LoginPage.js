@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
 export default function LoginPage() {
   // Initialize the state variables to store the login status and error message
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('loginToken') === 'userIsLoggedIn');
   const [errorMessage, setErrorMessage] = useState('No error');
 
   async function handleLogin() {
@@ -21,11 +22,22 @@ export default function LoginPage() {
       setErrorMessage(error.message);
     }
   }
+  // Save the login status to local storage when it changes
+  useEffect(() => {
+    if (isLoggedIn) {
+      // If the user is logged in, save a login token to local storage
+      localStorage.setItem('loginToken', 'userIsLoggedIn');
+    } else {
+      // If the user is not logged in, remove the login token from local storage
+      localStorage.removeItem('loginToken');
+    }
+  }, [isLoggedIn]);
+
 
   return (
     <div>
       {isLoggedIn ? (
-        <p>You are logged in!</p>
+         <Navigate to="/home" />
       ) : (
         <>
           <button onClick={handleLogin}>Login with MetaMask</button>
