@@ -3,36 +3,16 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
 import './App.scss';
-import {
-      BrowserRouter,
-      createBrowserRouter,
-      RouterProvider,
-    } from "react-router-dom";
-import Home from './Views/Home';
-import LoginPage from './Metamask/LoginPage';
+import { BrowserRouter } from "react-router-dom";
+import {RemoveScrollBar} from 'react-remove-scroll-bar';
 
 
-//     const router = createBrowserRouter([
-//       {
-//         path: "/",
-//         element: <LoginPage />,
-        
-//         children: [
-//           {
-//             path: "home",
-//             element: <Home />,
-            
-//           },
-//         ],
-//       },
-//     ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       //<RouterProvider router={router} />
-      <BrowserRouter><App/></BrowserRouter>
+      <BrowserRouter> <RemoveScrollBar/><App/></BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
