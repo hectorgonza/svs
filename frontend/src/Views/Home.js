@@ -1,9 +1,9 @@
 import {  Row, Col, Button } from 'react-bootstrap';
 import LogOut from '../Metamask/LogoutPage';
-
+import { useNavigate, Link} from 'react-router-dom';
 export default function Home() {
     
-    
+     let navigate = useNavigate()
     return (
         
        
@@ -14,13 +14,13 @@ export default function Home() {
           <Col xs={12}>
             <Row>
               <Col xs={12} style={{ marginBottom: '20px'}}>
-                <Button onClick={() => console.log('Vote')}>Vote</Button>
+                <Button onClick={() => navigate("/vote")}>Vote</Button>
               </Col>
               <Col xs={12} style={{ marginBottom: '20px'}}>
-                <Button onClick={() => console.log('Create Election')}>Create Election</Button>
+                <Button onClick={() => navigate("/election")}>Create Election</Button>
               </Col>
               <Col xs={12}>
-                <Button onClick={() => console.log('Results')}>Results</Button>
+                <Button onClick={() => navigate("/results")}>Results</Button>
               </Col>
             </Row>
           </Col>
