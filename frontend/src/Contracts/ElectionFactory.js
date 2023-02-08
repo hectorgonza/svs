@@ -3,6 +3,7 @@ import {  keypair } from "keypair";
 import {forge} from "node-forge"
 import erc20ABI from "../utils/constants/electionFactoryABI"
 import address from "../utils/constants/electionFactoryAddress"
+
 export async function getElections (){
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const erc20 = new ethers.Contract(address,erc20ABI, provider)
