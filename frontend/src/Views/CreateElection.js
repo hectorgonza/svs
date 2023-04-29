@@ -7,11 +7,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import "react-datepicker/dist/react-datepicker.css";
 import {addHours} from '../utils/utils.js'
+
+
 const initialForm = {
   election: '',
-  startTime: '',
-  duration: '',
-  candidates: {}
+  startTime: dayjs(new Date()).toISOString() + '',
+  endTime: dayjs(addHours(new Date(), 4)).toISOString() + '',
+  candidates: []
 };
 
 function CreateElection() {
@@ -39,18 +41,19 @@ function CreateElection() {
     e.preventDefault();
     if (!newListItem.includes( input.current.value) ){
       setNewListItem([...newListItem, input.current.value]);
-      setField('candidates', newListItem)
+      setForm({
+        ...form,
+        candidates: [...newListItem, input.current.value]
+      });
+
       input.current.value = ""
     }
     
   };
-  var removeFromList = item => {
-    
-    setNewListItem(newListItem.filter(function(ele){ 
-        return ele !== item; 
-    }))
-    setField('candidates', newListItem)
-    console.log(newListItem)
+  const removeFromList = item => {
+    const updatedList = newListItem.filter(ele => ele !== item);
+    setNewListItem(updatedList);
+    setField('candidates', updatedList);
   };
 
 const handleSubmit = e => {
@@ -68,25 +71,32 @@ const handleSubmit = e => {
   };
 
   const findFormErrors = () => {
-    const { election, startTime, duration, candidates} = form;
+    console.log(form)
+    const { election, startTime, endDate, candidates} = form;
     const newErrors = {};
 
-    if (!election || election === '') newErrors.election = 'cannot be blank!';
+    if (!election || election === '') newErrors.election = 'Cannot be blank!';
     /* else if (email.length > 30) newErrors.email = 'email is too long!'; */
-    if (!startTime || startTime === '') 
+    if (!startTime || startTime === '') newErrors.startTime = 'Cannot be blank';
     //else if (){}
-    if (!candidates || candidates === []) newErrors.startTime = 'cannot be blank';
+    if (!candidates || candidates.length ===  0) newErrors.candidates = 'Cannot be blank';
 
-    if (!duration || duration === '') newErrors.startTime = 'cannot be blank';
-    else 
+    if (!endDate || endDate === '') newErrors.endDate = 'Cannot be blank';
+    
+ /*    console.log(newErrors)
+    console.log(Object.keys(candidates).length )
+    console.log(candidates ) */
     return newErrors;
   };
   return (
     <Container>
+      
+      <h1 className='mb-3'>Election creation</h1>
+
     <Form className="reduceForm">
       <Form.Group className="mb-3" controlId="formBasicName">
         <Form.Label>Name of the election</Form.Label>
-        <Form.Control type="name" placeholder="Enter name" />
+        <Form.Control type="name" placeholder="Enter name" onChange={(eve) => setField('election',eve.target.value )}/>
       </Form.Group>
 
       {/* Create calendar */}
@@ -98,11 +108,15 @@ const handleSubmit = e => {
           <DateTimePicker
             renderInput={(props) => <TextField {...props} />}
             label="DateTimePicker"
-            minDate={startDate}
+            minDate={dayjs(new Date())}
             value={startDate}
             onChange={(newValue) => {
+              console.log(newValue.toDate().toLocaleString())
               setStartDate(newValue);
+              setField('startTime', newValue.toDate().toLocaleString())
+              setEndDate(addHours(newValue.toDate(), 4))
             }}
+            
           />
         </LocalizationProvider>
       </Form.Group>
@@ -115,10 +129,11 @@ const handleSubmit = e => {
           <DateTimePicker
             renderInput={(props) => <TextField {...props} />}
             label="DateTimePicker"
-            minDate={endDate}
+            minDate={addHours(startDate.toDate(), 4)}
             value={endDate}
             onChange={(newValue) => {
               setEndDate(newValue);
+              setField('endTime',newValue.toDate().toLocaleString())
             }}
           />
         </LocalizationProvider>
@@ -137,6 +152,7 @@ const handleSubmit = e => {
             {item} 
             <Button type='button' onClick={() =>removeFromList(item)}> X </Button>
           </li>
+         
           ))}
         </ul>
         </Form.Group>
