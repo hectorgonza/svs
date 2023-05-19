@@ -5,22 +5,25 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import AlertMessage  from '../utils/Alert.js';
 import "react-datepicker/dist/react-datepicker.css";
-import {addHours} from '../utils/utils.js'
+import {addHours,addDays} from '../utils/utils.js'
 
-
+const  pageLoadedOn = new Date()
 const initialForm = {
   election: '',
-  startTime: dayjs(new Date()).toISOString() + '',
-  endTime: dayjs(addHours(new Date(), 4)).toISOString() + '',
+  startTime: new Date(),
+  endTime: addHours(new Date(), 4),
   candidates: []
 };
 
 function CreateElection() {
+  
+ 
   const [form, setForm] = React.useState(initialForm);
   const [errors, setErrors] = React.useState({});
   const [startDate, setStartDate] = React.useState(dayjs(new Date()));
-  const [endDate, setEndDate] = React.useState(dayjs(addHours(new Date(), 4)));
+  const [endDate, setEndDate] = React.useState(dayjs(addHours(new Date(), 1)));
   const [newListItem, setNewListItem] = React.useState([]);
   const input = React.useRef();
 
@@ -39,14 +42,14 @@ function CreateElection() {
 
   var addToList = e => {
     e.preventDefault();
-    if (!newListItem.includes( input.current.value) ){
+    if (!newListItem.includes( input.current.value) && input.current.value !=='' ){
       setNewListItem([...newListItem, input.current.value]);
       setForm({
         ...form,
         candidates: [...newListItem, input.current.value]
       });
 
-      input.current.value = ""
+      input.current.value = ''
     }
     
   };
@@ -60,34 +63,50 @@ const handleSubmit = e => {
     e.preventDefault();
     const newErrors = findFormErrors();
     if (Object.keys(newErrors).length > 0) {
+      
       setErrors(newErrors);
+      
     } else {
       //if(){
       //blockcahin fetch works
-
+    
+      console.log("exito")
       //}else{}
       //redirect to home page with notifcation
     }
   };
 
+
+
   const findFormErrors = () => {
-    console.log(form)
-    const { election, startTime, endDate, candidates} = form;
+  
+    const { election, startTime, endTime, candidates} = form;
+    
     const newErrors = {};
 
-    if (!election || election === '') newErrors.election = 'Cannot be blank!';
+    if (!election || election === '') newErrors.election = 'Election Cannot be blank!';
     /* else if (email.length > 30) newErrors.email = 'email is too long!'; */
-    if (!startTime || startTime === '') newErrors.startTime = 'Cannot be blank';
-    //else if (){}
+   
+    if (!startTime || startTime === '') newErrors.startTime = 'StartDate cannot be blank!';
+    else if (startTime <  pageLoadedOn){  newErrors.startime = 'StartDate cannot be before now' }
+
+    if (!endTime || endTime === '') newErrors.endDate = 'Cannot be blank';
+    else if (endTime < startTime){  newErrors.endDate = 'EndDate cannot be before Startdate' }
+    
+  
+
+    if (!newErrors.startTime || !newErrors.endDate){
+      let duration =  Math.floor(Math.abs(endTime - startTime) / 36e5)
+      if (duration < 1 ){newErrors.endDate = 'Duration cannot be less than 1h' }
+      else if (duration > 96) {newErrors.endDate = 'Duration cannot be more than 4 days' }
+    }
     if (!candidates || candidates.length ===  0) newErrors.candidates = 'Cannot be blank';
 
-    if (!endDate || endDate === '') newErrors.endDate = 'Cannot be blank';
-    
- /*    console.log(newErrors)
-    console.log(Object.keys(candidates).length )
-    console.log(candidates ) */
     return newErrors;
   };
+
+
+  
   return (
     <Container>
       
@@ -113,8 +132,8 @@ const handleSubmit = e => {
             onChange={(newValue) => {
               console.log(newValue.toDate().toLocaleString())
               setStartDate(newValue);
-              setField('startTime', newValue.toDate().toLocaleString())
-              setEndDate(addHours(newValue.toDate(), 4))
+              setField('startTime', newValue.toDate())
+              setEndDate(addHours(newValue.toDate(), 1))
             }}
             
           />
@@ -129,11 +148,12 @@ const handleSubmit = e => {
           <DateTimePicker
             renderInput={(props) => <TextField {...props} />}
             label="DateTimePicker"
-            minDate={addHours(startDate.toDate(), 4)}
+            minDate={addHours(startDate.toDate(), 1)}
+            maxDate={addDays(startDate.toDate(),4)}
             value={endDate}
             onChange={(newValue) => {
               setEndDate(newValue);
-              setField('endTime',newValue.toDate().toLocaleString())
+              setField('endTime',newValue.toDate())
             }}
           />
         </LocalizationProvider>
@@ -162,6 +182,7 @@ const handleSubmit = e => {
         Submit
       </Button>
     </Form>
+    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)}/>)}
    </Container>
   );
 }
