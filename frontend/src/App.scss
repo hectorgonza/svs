@@ -15,3 +15,17 @@ span {
     font-weight: bold;
   }
 } 
+
+ul{
+
+  display: flex;  
+  list-style-type: none;
+  padding-left: 0px;
+}
+li{
+  margin-right: 1rem;
+  background-color: rgba(209, 113, 230, 0.424);
+  border-radius: 4px;
+  padding-left: 5px;
+
+}

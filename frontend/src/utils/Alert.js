@@ -6,22 +6,22 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const AlertMessage = ({message}) =>  {
-        console.log("alert")
-        const [open, setOpen] = useState(true); 
+const AlertMessage = ({message,show,setShow}) =>  {
+       
+        
         //Leave this true since we are not using a button
-    
+        console.log(show)
         const handleClose = (event, reason) => {
             if (reason === 'clickaway') {
-              setOpen(true);
+              setShow(true);
               return;
             }
         
-            setOpen(false);
+            setShow(false);
           };
 
     return (
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Snackbar open={show } autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">{message}</Alert>
       </Snackbar>
     )

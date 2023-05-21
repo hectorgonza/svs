@@ -38,7 +38,7 @@ export default function LoginPage() {
   return (
     <div>
       {isLoggedIn ? (
-         <Navigate to="/home" />
+         <Navigate to="/" />
       ) : (
         
 

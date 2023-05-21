@@ -25,6 +25,7 @@ function CreateElection() {
   const [startDate, setStartDate] = React.useState(dayjs(new Date()));
   const [endDate, setEndDate] = React.useState(dayjs(addHours(new Date(), 1)));
   const [newListItem, setNewListItem] = React.useState([]);
+  const [showError,setShowError] = React.useState(false);
   const input = React.useRef();
 
   const setField = (field, value) => {
@@ -65,7 +66,7 @@ const handleSubmit = e => {
     if (Object.keys(newErrors).length > 0) {
       
       setErrors(newErrors);
-      
+      setShowError(true)
     } else {
       //if(){
       //blockcahin fetch works
@@ -170,7 +171,7 @@ const handleSubmit = e => {
         {newListItem.map((item, b) => (
           <li key={b}>
             {item} 
-            <Button type='button' onClick={() =>removeFromList(item)}> X </Button>
+            <Button type='button' className='ms-2' onClick={() =>removeFromList(item)}> X </Button>
           </li>
          
           ))}
@@ -182,7 +183,7 @@ const handleSubmit = e => {
         Submit
       </Button>
     </Form>
-    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)}/>)}
+    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)} show={showError} setShow={setShowError}/>)}
    </Container>
   );
 }
