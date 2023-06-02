@@ -4,6 +4,7 @@ import    CreateElection from './Views/CreateElection';
 import Home from './Views/Home';
 import NotFound from './Views/NotFound';
 import LoginPage from './Metamask/LoginPage';
+import Elections from './Views/Elections';
 
 function PrivateRoute(props) {
   const [isLoggedIn] = useState(
@@ -23,7 +24,8 @@ export default function App() {
 
         
           <Route path="/election" element={<PrivateRoute  element={<CreateElection/>}/>} />
-        
+
+          <Route path="/vote" element={<PrivateRoute  element={<Elections/>}/>} />
         <Route path="/login" element={<LoginPage/>} ></Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

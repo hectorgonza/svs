@@ -7,13 +7,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import AlertMessage  from '../utils/Alert.js';
 import "react-datepicker/dist/react-datepicker.css";
-import {addHours,addDays} from '../utils/utils.js'
+import {addHours,addDays} from '../utils/utils.ts'
+import { createElection } from '../Contracts/ElectionFactory.js';
 
 const  pageLoadedOn = new Date()
 const initialForm = {
   election: '',
   startTime: new Date(),
-  endTime: addHours(new Date(), 4),
+  endTime: addHours(new Date(), 1),
   candidates: []
 };
 
@@ -29,6 +30,7 @@ function CreateElection() {
   const input = React.useRef();
 
   const setField = (field, value) => {
+    console.log(form)
     setForm({
       ...form,
       [field]: value
@@ -70,8 +72,13 @@ const handleSubmit = e => {
     } else {
       //if(){
       //blockcahin fetch works
-    
-      console.log("exito")
+
+      var start = Math.floor(form.startTime.getTime() / 1000)
+      console.log(form.startTime+": "+start)
+      var duration = Math.floor(Math.abs(form.startTime.getTime() - form.endTime.getTime())/1000)
+      console.log("Endate: "+ form.endTime)
+      console.log(duration)
+      //console.log(createElection(form.election, start, duration, form.candidates))
       //}else{}
       //redirect to home page with notifcation
     }
@@ -106,7 +113,12 @@ const handleSubmit = e => {
     return newErrors;
   };
 
-
+  const handleInputTextOnly = event => {
+    const result = event.target.value.replace(/[^A-Za-z]/ig, '');
+    
+  setField(event.target.id, result)
+ 
+  };
   
   return (
     <Container>
@@ -114,12 +126,12 @@ const handleSubmit = e => {
       <h1 className='mb-3'>Election creation</h1>
 
     <Form className="reduceForm">
-      <Form.Group className="mb-3" controlId="formBasicName">
+      <Form.Group className="mb-3" controlId="election">
         <Form.Label>Name of the election</Form.Label>
-        <Form.Control type="name" placeholder="Enter name" onChange={(eve) => setField('election',eve.target.value )}/>
+        <Form.Control type="text" placeholder="Enter name" value={form.election} onChange={handleInputTextOnly}/>
       </Form.Group>
 
-      {/* Create calendar */}
+      
       <Form.Group className="mb-3" controlId="formBasicStartTime">
         <Form.Label >Start time: </Form.Label>
         <br />
@@ -134,7 +146,7 @@ const handleSubmit = e => {
               console.log(newValue.toDate().toLocaleString())
               setStartDate(newValue);
               setField('startTime', newValue.toDate())
-              setEndDate(addHours(newValue.toDate(), 1))
+              setEndDate(dayjs(addHours(newValue.toDate(), 1)))
             }}
             
           />
@@ -163,8 +175,8 @@ const handleSubmit = e => {
       
       <Form.Group className="mb-3" controlId="formCandidates">
         <Form.Label>Candidates </Form.Label>
-        <InputGroup className="mb-3" controlId="formCandidates">
-        <Form.Control type="name" ref={input} placeholder="Enter Candidate" />
+        <InputGroup className="mb-3" controlId="candidates">
+        <Form.Control type="text" ref={input} placeholder="Enter Candidate" />
         <Button type="submit " onClick={addToList}>Add to List</Button>
         </InputGroup>
         <ul>
