@@ -3,38 +3,39 @@ import {Container, ListGroup,Button} from 'react-bootstrap';
 import {getElections,getElection} from '../Contracts/ElectionFactory'
 
 function Elections (){
-    const [elections, SetElection] = React.useState();
+    const [elections, SetElection] = React.useState([]);
     React.useEffect(() => {
         // Your code here
-        SetElection(getElections())
+     getElections().then(response => SetElection(response[0]))
+    
+        console.log(elections)
       }, []);
    
-    
-    return (
-        <Container>
+    if(elections !== []){
+      return (
+      <Container>
 
-        <h1 className='mb-3'>Choose Election</h1>
+      <h1 className='mb-3'>Choose Election</h1>
 
-        <ListGroup variant="flush">
-           
-           {elections.map((id, election) => (
-          <ListGroup.Item key={id}> 
-            {getElection(id)} 
-            
-            <Button type='button' className='ms-2' > Vote </Button>
-            
-            </ListGroup.Item>
+      <ListGroup >
+      {elections.map((election, id) => (
+         <ListGroup.Item key={id}> 
+          {getElection(id)}
+          <Button type='button' className='ms-2' > Vote </Button>
+          
+        </ListGroup.Item>  
+       ))
+        }
          
-          ))
-            
-            
+      </ListGroup>
 
-           }
-        </ListGroup>
+      </Container>
 
-        </Container>
-
-    );
+  );}
+  else{
+    return  <h1 className='mb-3'>Loading</h1>
+  }
+    
     
 }
 
