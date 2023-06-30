@@ -24,7 +24,9 @@ const config: HardhatUserConfig = {
       accounts: [
         MUMBAI_PRIVATE_KEY,
       ],
+      allowUnlimitedContractSize: true
     }, 
+    
   },
    etherscan: {  // Remove comment and add key in env/.env file to verify contracts.
     apiKey: ETHERSCAN_API_KEY,

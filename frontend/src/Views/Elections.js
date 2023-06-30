@@ -1,17 +1,29 @@
 import * as React from 'react';
 import {Container, ListGroup,Button} from 'react-bootstrap';
-import {getElections,getElection} from '../Contracts/ElectionFactory'
+import {getElections} from '../Contracts/ElectionFactory'
+import { useNavigate} from 'react-router-dom';
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import Loading from '../utils/Loading'
 
 function Elections (){
+    let navigate = useNavigate();
     const [elections, SetElection] = React.useState([]);
+    const { promiseInProgress } = usePromiseTracker()
+  
     React.useEffect(() => {
-        // Your code here
-     getElections().then(response => SetElection(response[0]))
-    
-        console.log(elections)
+        
+        trackPromise(getElections().then(response => {
+            SetElection(response[0])
+          }))
+         
       }, []);
    
-    if(elections !== []){
+     const voteClick= election => {
+        navigate("/vote/" + election)
+
+     }
+
+    if(!promiseInProgress){
       return (
       <Container>
 
@@ -20,8 +32,8 @@ function Elections (){
       <ListGroup >
       {elections.map((election, id) => (
          <ListGroup.Item key={id}> 
-          {getElection(id)}
-          <Button type='button' className='ms-2' > Vote </Button>
+          {election}
+          <Button type='button' className='ms-2' onClick={() => voteClick(election)} > Vote </Button>
           
         </ListGroup.Item>  
        ))
@@ -33,7 +45,8 @@ function Elections (){
 
   );}
   else{
-    return  <h1 className='mb-3'>Loading</h1>
+   
+    return   <Loading></Loading>
   }
     
     

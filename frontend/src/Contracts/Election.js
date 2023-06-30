@@ -1,17 +1,21 @@
 import { ethers } from "ethers";
-import erc20ABI from "../utils/constants/electionABI"
-import contractAddress from "../utils/constants/electionAddress"
-import { getElection } from "./ElectionFactory";
-import {generateBallot, signBallot,packAsNbytes} from "../scripts/tavs"
+import {electionABI as erc20ABI} from "../utils/constants"
+import {generateBallot, signBallot,packAsNbytes, parseEvent} from "../utils/utils.ts"
 
-async function sendVote(electionId, candidate){
+export async function getCandidates (address){
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const erc20 = new ethers.Contract(address,erc20ABI, provider)
+  return await erc20.functions.getCandidates()
+}
+
+export async function sendVote(address, candidate){
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    let erc20 = new ethers.Contract(contractAddress,erc20ABI, provider)
-    let election = await getElection(electionId)
+    let erc20 = new ethers.Contract(address,erc20ABI, provider.getSigner())
+   
     
     const [ballot, mask, inv_mask, hash, vote] = await generateBallot(
-        candidate
+         candidate
       );
       const signedBallot = await signBallot(ballot);
     let signedBallotBytes = signedBallot.toString(16);
@@ -22,10 +26,18 @@ async function sendVote(electionId, candidate){
     const maskHex = packAsNbytes(mask.toString(16));
     const invHex = packAsNbytes(inv_mask.toString(16));
     
-   await erc20.functions.sendVote(signedBallotBytes,
+   const result = await erc20.functions.sendVote(signedBallotBytes,
     maskHex,
     invHex
   );
-    
 
+  const txReceipt2 = await result.wait();
+  // @ts-ignore
+  const newVoteEvent = parseEvent(txReceipt2, address, "NewVote");
+ 
+  erc20.on("NewVote",(add, hash,candidate) => {
+    console.log(add, hash,candidate)
+});
+
+  return newVoteEvent
 }

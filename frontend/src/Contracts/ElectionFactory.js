@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import   keypair  from "keypair";
-import forge from "node-forge"
 import {electionFactoryABI as erc20ABI} from "../utils/constants.js"
 import {electionFactoryAddress as address} from "../utils/constants.js"
 import {packAsNbytes} from "../utils/utils.ts"
@@ -20,7 +19,7 @@ export async function createElection(name,
     startTime,
     duration,
     candidates){
-        var pair = keypair();
+       // var pair = keypair();
         
         /*var publicKey = forge.pki.publicKeyFromPem(pair.public);
         console.log(publicKey)*/

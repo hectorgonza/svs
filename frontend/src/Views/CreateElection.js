@@ -78,7 +78,7 @@ const handleSubmit = e => {
       var duration = Math.floor(Math.abs(form.startTime.getTime() - form.endTime.getTime())/1000)
       console.log("Endate: "+ form.endTime)
       console.log(duration)
-      //console.log(createElection(form.election, start, duration, form.candidates))
+      console.log(createElection(form.election, start, duration, form.candidates))
       //}else{}
       //redirect to home page with notifcation
     }

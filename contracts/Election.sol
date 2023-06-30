@@ -63,6 +63,10 @@ contract Election {
         }
     }
 
+    function getCandidates () external view returns (Candidate[] memory) {
+        return candidates;
+    }
+
     function sendVote (bytes memory signedMaskedBallot, bytes memory mask, bytes memory inverseMask) external {
         // Check timestamp before accepting the votes.votes
         require(block.timestamp < completionTime, "Election has already finished. No more votes accepted.");
