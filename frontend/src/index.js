@@ -4,16 +4,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './App.scss';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import {RemoveScrollBar} from 'react-remove-scroll-bar';
-import { StyledEngineProvider } from '@mui/material/styles';
 
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       //<RouterProvider router={router} />
-      <BrowserRouter> <RemoveScrollBar/><App/></BrowserRouter>
+      <Router> <RemoveScrollBar/><App/></Router>
 );
 
 // If you want to start measuring performance in your app, pass a function

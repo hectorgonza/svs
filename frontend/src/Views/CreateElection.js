@@ -22,7 +22,7 @@ const initialForm = {
 };
 
 function CreateElection() {
-  let navigate = useNavigate()
+  const navigate = useNavigate()
  
   const [form, setForm] = React.useState(initialForm);
   const [errors, setErrors] = React.useState({});
@@ -137,13 +137,13 @@ const handleSubmit = e => {
       <h1 className='mb-3'>Election creation</h1>
 
     <Form className="reduceForm">
-      <Form.Group className="mb-3" controlId="election">
+      <Form.Group className="mb-3" controlid="election">
         <Form.Label>Name of the election</Form.Label>
         <Form.Control type="text" placeholder="Enter name"  data-testid="create-election-name" value={form.election} onChange={handleInputTextOnly}/>
       </Form.Group>
 
       
-      <Form.Group className="mb-3" controlId="formBasicStartTime">
+      <Form.Group className="mb-3" controlid="formBasicStartTime">
         <Form.Label >Start time: </Form.Label>
         <br />
         <br />
@@ -165,7 +165,7 @@ const handleSubmit = e => {
         </LocalizationProvider>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicEndTime">
+      <Form.Group className="mb-3" controlid="formBasicEndTime">
         <Form.Label >End time: </Form.Label>
         <br />
         <br />
@@ -186,9 +186,9 @@ const handleSubmit = e => {
       </Form.Group>
 
       
-      <Form.Group className="mb-3" controlId="formCandidates">
-        <Form.Label>Candidates </Form.Label>
-        <InputGroup className="mb-3" controlId="candidates"  data-testid="create-election-candidates">
+      <Form.Group className="mb-3" controlid="formCandidates">
+        <Form.Label>Candidates: </Form.Label>
+        <InputGroup className="mb-3" controlid="candidates"  data-testid="create-election-candidates">
           <Form.Control type="text" ref={input} placeholder="Enter Candidate" />
           <Button type="submit " onClick={addToList}>Add to List</Button>
         </InputGroup>

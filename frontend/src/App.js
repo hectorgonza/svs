@@ -1,6 +1,6 @@
 import { Routes,  Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
-import    CreateElection from './Views/CreateElection';
+import CreateElection from './Views/CreateElection';
 import Home from './Views/Home';
 import NotFound from './Views/NotFound';
 import LoginPage from './Metamask/LoginPage';
