@@ -9,6 +9,9 @@ import AlertMessage  from '../utils/Alert.js';
 import "react-datepicker/dist/react-datepicker.css";
 import {addHours,addDays} from '../utils/utils.ts'
 import { createElection } from '../Contracts/ElectionFactory.js';
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import Loading from '../utils/Loading.js';
+import { useNavigate } from 'react-router-dom';
 
 const  pageLoadedOn = new Date()
 const initialForm = {
@@ -19,7 +22,7 @@ const initialForm = {
 };
 
 function CreateElection() {
-  
+  let navigate = useNavigate()
  
   const [form, setForm] = React.useState(initialForm);
   const [errors, setErrors] = React.useState({});
@@ -27,6 +30,8 @@ function CreateElection() {
   const [endDate, setEndDate] = React.useState(dayjs(addHours(new Date(), 1)));
   const [newListItem, setNewListItem] = React.useState([]);
   const [showError,setShowError] = React.useState(false);
+  const { promiseInProgress } = usePromiseTracker()
+
   const input = React.useRef();
 
   const setField = (field, value) => {
@@ -74,11 +79,17 @@ const handleSubmit = e => {
       //blockcahin fetch works
 
       var start = Math.floor(form.startTime.getTime() / 1000)
-      console.log(form.startTime+": "+start)
       var duration = Math.floor(Math.abs(form.startTime.getTime() - form.endTime.getTime())/1000)
-      console.log("Endate: "+ form.endTime)
-      console.log(duration)
-      console.log(createElection(form.election, start, duration, form.candidates))
+      
+      trackPromise(createElection(form.election, start, duration, form.candidates).then( response => {
+
+        console.log(response);
+        navigate("/",{ state: { showAlert: true } });
+
+      }).catch(error => {
+        // Handle the error
+        console.error(error);
+      }))
       //}else{}
       //redirect to home page with notifcation
     }
@@ -119,7 +130,7 @@ const handleSubmit = e => {
   setField(event.target.id, result)
  
   };
-  
+  if(!promiseInProgress){
   return (
     <Container>
       
@@ -128,7 +139,7 @@ const handleSubmit = e => {
     <Form className="reduceForm">
       <Form.Group className="mb-3" controlId="election">
         <Form.Label>Name of the election</Form.Label>
-        <Form.Control type="text" placeholder="Enter name" value={form.election} onChange={handleInputTextOnly}/>
+        <Form.Control type="text" placeholder="Enter name"  data-testid="create-election-name" value={form.election} onChange={handleInputTextOnly}/>
       </Form.Group>
 
       
@@ -141,6 +152,7 @@ const handleSubmit = e => {
             renderInput={(props) => <TextField {...props} />}
             label="DateTimePicker"
             minDate={dayjs(new Date())}
+            data-testid="create-election-startTime"
             value={startDate}
             onChange={(newValue) => {
               console.log(newValue.toDate().toLocaleString())
@@ -164,6 +176,7 @@ const handleSubmit = e => {
             minDate={addHours(startDate.toDate(), 1)}
             maxDate={addDays(startDate.toDate(),4)}
             value={endDate}
+            data-testid="create-election-endDate"
             onChange={(newValue) => {
               setEndDate(newValue);
               setField('endTime',newValue.toDate())
@@ -175,9 +188,9 @@ const handleSubmit = e => {
       
       <Form.Group className="mb-3" controlId="formCandidates">
         <Form.Label>Candidates </Form.Label>
-        <InputGroup className="mb-3" controlId="candidates">
-        <Form.Control type="text" ref={input} placeholder="Enter Candidate" />
-        <Button type="submit " onClick={addToList}>Add to List</Button>
+        <InputGroup className="mb-3" controlId="candidates"  data-testid="create-election-candidates">
+          <Form.Control type="text" ref={input} placeholder="Enter Candidate" />
+          <Button type="submit " onClick={addToList}>Add to List</Button>
         </InputGroup>
         <ul>
         {newListItem.map((item, b) => (
@@ -191,13 +204,17 @@ const handleSubmit = e => {
         </Form.Group>
         
 
-      <Button variant="primary" type="submit"  onClick={handleSubmit}>
+      <Button variant="primary" type="submit"  onClick={handleSubmit} data-testid="create-election-submit">
         Submit
       </Button>
     </Form>
     {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)} show={showError} setShow={setShowError}/>)}
    </Container>
   );
+    }else{
+
+      return <Loading></Loading>
+    }
 }
 
 export default CreateElection;

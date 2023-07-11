@@ -1,21 +1,19 @@
 import * as React from 'react';
 import {Container, ListGroup,Button} from 'react-bootstrap';
-import {getAvailableElections} from '../Contracts/ElectionFactory'
+import { getElections} from '../Contracts/ElectionFactory'
 import { useNavigate} from 'react-router-dom';
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import Loading from '../utils/Loading'
 
-function Elections (){
+function ResultMenu (){
     let navigate = useNavigate();
     const [elections, SetElection] = React.useState([]);
     const { promiseInProgress } = usePromiseTracker()
   
     React.useEffect(() => {
         
-        trackPromise(getAvailableElections().then(response => {
+        trackPromise(getElections().then(response => {
           console.log (response)
-          
-
             SetElection(response[0])
           }).catch(error => {
             // Handle the error
@@ -25,7 +23,7 @@ function Elections (){
       }, []);
    
      const voteClick= election => {
-        navigate("/vote/" + election)
+        navigate("/results/" + election)
 
      }
 
@@ -39,7 +37,7 @@ function Elections (){
       {elections.map((election, id) => (
          <ListGroup.Item key={id}> 
           {election}
-          <Button type='button' className='ms-2' onClick={() => voteClick(election)} > Vote </Button>
+          <Button type='button' className='ms-2' onClick={() => voteClick(election)} > View Results </Button>
           
         </ListGroup.Item>  
        ))
@@ -58,4 +56,4 @@ function Elections (){
     
 }
 
-export default Elections;
+export default ResultMenu;

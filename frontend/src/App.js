@@ -6,6 +6,8 @@ import NotFound from './Views/NotFound';
 import LoginPage from './Metamask/LoginPage';
 import Elections from './Views/Elections';
 import ElectionVote from './Views/ElectionVote';
+import ResultMenu from './Views/ResultMenu';
+import ResultsElection from './Views/ResultsElection';
 function PrivateRoute(props) {
   const [isLoggedIn] = useState(
     localStorage.getItem('loginToken') === 'userIsLoggedIn'
@@ -27,6 +29,9 @@ export default function App() {
 
         <Route path="/vote" element={<PrivateRoute  element={<Elections/>}/>} />
         <Route path="/vote/:address" element={<PrivateRoute  element={<ElectionVote/>}/>} />
+
+        <Route path="/results" element={<PrivateRoute  element={<ResultMenu/>}/>} />
+        <Route path="/results/:address" element={<PrivateRoute  element={<ResultsElection/>}/>} />
 
         <Route path="/login" element={<LoginPage/>} ></Route>
         <Route path="*" element={<NotFound />} />

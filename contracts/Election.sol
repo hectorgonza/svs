@@ -63,8 +63,14 @@ contract Election {
         }
     }
 
+    //public functions
     function getCandidates () external view returns (Candidate[] memory) {
         return candidates;
+    }
+
+    function getCompletionTime() external view returns(uint256){
+        return completionTime;
+
     }
 
     function sendVote (bytes memory signedMaskedBallot, bytes memory mask, bytes memory inverseMask) external {
@@ -123,6 +129,7 @@ contract Election {
         return (_voteChoice, _voteHash);
     }
 
+    //private functions
     function removeLeadingZeros(bytes memory data) internal pure returns (bytes memory) {
         uint zbytes = 0;
         bool leadingZeros = true;

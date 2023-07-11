@@ -5,23 +5,31 @@ import { useParams} from 'react-router-dom';
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import { getCandidates,sendVote } from '../Contracts/Election';
 import Loading from '../utils/Loading'
-
+import { useNavigate } from 'react-router-dom';
 
 function ElectionVote (){
 
     const  address = useParams().address
     const [candidates, SetCandidates] = React.useState([]);
     const { promiseInProgress } = usePromiseTracker()
-   
+   const navigate = useNavigate()
+
     const voteClick = candidate => {
         console.log(candidate)
+        trackPromise(
+            sendVote(address, candidate)
+              .then(response => {
+                navigate('/', { state: { showAlert: true } });
+              })
+              .catch(error => {
+                // Handle the error
+                console.error(error);
+              })
+          );
+        
+        };
 
-      sendVote(address, candidate).then( response => (
-
-        console.log(response)
-       ))
-
-     }
+     
     
      React.useEffect(() => {
        
@@ -43,6 +51,7 @@ function ElectionVote (){
     if(!promiseInProgress){
         return (
             <Container>
+                
             <h1 className='mb-3'>Vote </h1>
 
                 <ListGroup >

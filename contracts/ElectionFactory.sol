@@ -20,6 +20,34 @@ contract ElectionFactory {
         return elections[_id];
     }
 
+    function getAvailableElections(uint256 _timestamp) external view returns (Election[] memory) {
+        uint256 count = 0;
+       
+        // Determine the number of available elections
+        for (uint256 i = 0; i < elections.length; i++) {
+             uint256 completionTime =  elections[i].getCompletionTime();
+            if (_timestamp < completionTime) {
+                count++;
+            }
+        }
+        
+        // Create a fixed-size array with the determined count
+        Election[] memory aux = new Election[](count);
+        
+        // Copy available elections to the aux array
+        uint256 index = 0;
+        for (uint256 i = 0; i < elections.length; i++) {
+            uint256 completionTime =  elections[i].getCompletionTime();
+            if (_timestamp < completionTime) {
+                aux[index] = elections[i];
+                index++;
+            }
+        }
+        
+        return aux;
+
+        }
+
     // Private functions
     function createElection(string memory _name,
                              bytes memory _pubKey,
