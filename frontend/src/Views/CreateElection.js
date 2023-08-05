@@ -14,12 +14,41 @@ import Loading from '../utils/Loading.js';
 import { useNavigate } from 'react-router-dom';
 
 const  pageLoadedOn = new Date()
+
 const initialForm = {
   election: '',
   startTime: new Date(),
   endTime: addHours(new Date(), 1),
   candidates: []
 };
+
+export const findFormErrors = (form) => {
+  
+  const { election, startTime, endTime, candidates} = form;
+  
+  const newErrors = {};
+
+  if (!election || election === '') newErrors.election = 'Election Cannot be blank!';
+  /* else if (email.length > 30) newErrors.email = 'email is too long!'; */
+ 
+  if (!startTime || startTime === '') newErrors.startTime = 'StartDate cannot be blank!';
+  else if (startTime <  pageLoadedOn){  newErrors.startime = 'StartDate cannot be before now' }
+
+  if (!endTime || endTime === '') newErrors.endDate = 'Cannot be blank';
+  else if (endTime < startTime){  newErrors.endDate = 'EndDate cannot be before Startdate' }
+  
+
+
+  if (!newErrors.startTime || !newErrors.endDate){
+    let duration =  Math.floor(Math.abs(endTime - startTime) / 36e5)
+    if (duration < 1 ){newErrors.endDate = 'Duration cannot be less than 1h' }
+    else if (duration > 96) {newErrors.endDate = 'Duration cannot be more than 4 days' }
+  }
+  if (!candidates || candidates.length ===  0) newErrors.candidates = 'Cannot be blank';
+
+  return newErrors;
+};
+
 
 function CreateElection() {
   const navigate = useNavigate()
@@ -35,7 +64,7 @@ function CreateElection() {
   const input = React.useRef();
 
   const setField = (field, value) => {
-    console.log(form)
+    
     setForm({
       ...form,
       [field]: value
@@ -69,7 +98,7 @@ function CreateElection() {
 
 const handleSubmit = e => {
     e.preventDefault();
-    const newErrors = findFormErrors();
+    const newErrors = findFormErrors(form);
     if (Object.keys(newErrors).length > 0) {
       
       setErrors(newErrors);
@@ -97,36 +126,10 @@ const handleSubmit = e => {
 
 
 
-  const findFormErrors = () => {
-  
-    const { election, startTime, endTime, candidates} = form;
-    
-    const newErrors = {};
-
-    if (!election || election === '') newErrors.election = 'Election Cannot be blank!';
-    /* else if (email.length > 30) newErrors.email = 'email is too long!'; */
-   
-    if (!startTime || startTime === '') newErrors.startTime = 'StartDate cannot be blank!';
-    else if (startTime <  pageLoadedOn){  newErrors.startime = 'StartDate cannot be before now' }
-
-    if (!endTime || endTime === '') newErrors.endDate = 'Cannot be blank';
-    else if (endTime < startTime){  newErrors.endDate = 'EndDate cannot be before Startdate' }
-    
-  
-
-    if (!newErrors.startTime || !newErrors.endDate){
-      let duration =  Math.floor(Math.abs(endTime - startTime) / 36e5)
-      if (duration < 1 ){newErrors.endDate = 'Duration cannot be less than 1h' }
-      else if (duration > 96) {newErrors.endDate = 'Duration cannot be more than 4 days' }
-    }
-    if (!candidates || candidates.length ===  0) newErrors.candidates = 'Cannot be blank';
-
-    return newErrors;
-  };
-
+ 
   const handleInputTextOnly = event => {
     const result = event.target.value.replace(/[^A-Za-z]/ig, '');
-    
+  
   setField(event.target.id, result)
  
   };
@@ -139,7 +142,7 @@ const handleSubmit = e => {
     <Form className="reduceForm">
       <Form.Group className="mb-3" controlid="election">
         <Form.Label>Name of the election</Form.Label>
-        <Form.Control type="text" placeholder="Enter name"  data-testid="create-election-name" value={form.election} onChange={handleInputTextOnly}/>
+        <Form.Control type="text" id="election" placeholder="Enter name"  data-testid="create-election-name" value={form.election} onChange={handleInputTextOnly}/>
       </Form.Group>
 
       
@@ -149,10 +152,10 @@ const handleSubmit = e => {
         <br />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
-            renderInput={(props) => <TextField {...props} />}
+            renderInput={(props) => <TextField {...props} data-testid="create-election-startTime"/>}
             label="DateTimePicker"
             minDate={dayjs(new Date())}
-            data-testid="create-election-startTime"
+            inputProps={{ 'data-testid': 'start-date-picker' }}
             value={startDate}
             onChange={(newValue) => {
               console.log(newValue.toDate().toLocaleString())
@@ -171,12 +174,12 @@ const handleSubmit = e => {
         <br />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
-            renderInput={(props) => <TextField {...props} />}
+            renderInput={(props) => <TextField {...props} data-testid="create-election-endDate"/>}
             label="DateTimePicker"
             minDate={addHours(startDate.toDate(), 1)}
             maxDate={addDays(startDate.toDate(),4)}
             value={endDate}
-            data-testid="create-election-endDate"
+            inputProps={{ 'data-testid': 'end-date-picker' }}
             onChange={(newValue) => {
               setEndDate(newValue);
               setField('endTime',newValue.toDate())
@@ -188,8 +191,8 @@ const handleSubmit = e => {
       
       <Form.Group className="mb-3" controlid="formCandidates">
         <Form.Label>Candidates: </Form.Label>
-        <InputGroup className="mb-3" controlid="candidates"  data-testid="create-election-candidates">
-          <Form.Control type="text" ref={input} placeholder="Enter Candidate" />
+        <InputGroup className="mb-3" controlid="candidates"  >
+          <Form.Control type="text" ref={input} placeholder="Enter Candidate" data-testid="create-election-candidates" />
           <Button type="submit " onClick={addToList}>Add to List</Button>
         </InputGroup>
         <ul>
@@ -208,7 +211,7 @@ const handleSubmit = e => {
         Submit
       </Button>
     </Form>
-    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)} show={showError} setShow={setShowError}/>)}
+    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)} show={showError} setShow={setShowError} />)}
    </Container>
   );
     }else{
@@ -218,3 +221,4 @@ const handleSubmit = e => {
 }
 
 export default CreateElection;
+
