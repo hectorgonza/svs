@@ -58,9 +58,10 @@ function ResultsElection (){
                 console.log(candidate[0] + ': ' + ethers.BigNumber.from(candidate.numVotes))
                 return 0
             });
-            data.labels = cand;
-            data.datasets[0].data = votes;
-            setData(data)
+            let aux = data
+            aux.labels = cand;
+            aux.datasets[0].data = votes;
+            setData(aux)
             console.log(data)
         }))
          

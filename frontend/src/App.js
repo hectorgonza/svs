@@ -1,5 +1,4 @@
-import { Routes,  Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Routes,  Route } from 'react-router-dom';
 import CreateElection from './Views/CreateElection';
 import Home from './Views/Home';
 import NotFound from './Views/NotFound';
@@ -8,14 +7,9 @@ import Elections from './Views/Elections';
 import ElectionVote from './Views/ElectionVote';
 import ResultMenu from './Views/ResultMenu';
 import ResultsElection from './Views/ResultsElection';
-function PrivateRoute(props) {
-  const [isLoggedIn] = useState(
-    localStorage.getItem('loginToken') === 'userIsLoggedIn'
-  );
-  return  isLoggedIn ? props.element : <Navigate to="/login" />
-        
+import PrivateRoute from './Metamask/PrivateRoute';
 
-}
+
 
 export default function App() {
   
