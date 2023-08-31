@@ -1,4 +1,4 @@
-import {Button, Container, Form,InputGroup} from 'react-bootstrap';
+import {Button, Container, Form,InputGroup, Row, Col} from 'react-bootstrap';
 import * as React from 'react';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,29 +22,28 @@ const initialForm = {
   candidates: []
 };
 
-export const findFormErrors = (form) => {
+ export const findFormErrors = (form) => {
   
   const { election, startTime, endTime, candidates} = form;
   
   const newErrors = {};
 
-  if (!election || election === '') newErrors.election = 'Election Cannot be blank!';
-  /* else if (email.length > 30) newErrors.email = 'email is too long!'; */
+  if (!election || election === '') newErrors.election = 'Election cannot be blank!';
  
   if (!startTime || startTime === '') newErrors.startTime = 'StartDate cannot be blank!';
-  else if (startTime <  pageLoadedOn){  newErrors.startime = 'StartDate cannot be before now' }
+  else if (startTime <  pageLoadedOn){  newErrors.startTime = 'StartDate cannot be before now' }
 
-  if (!endTime || endTime === '') newErrors.endDate = 'Cannot be blank';
+  if (!endTime || endTime === '') newErrors.endDate = 'EndDate cannot be blank';
   else if (endTime < startTime){  newErrors.endDate = 'EndDate cannot be before Startdate' }
   
 
 
-  if (!newErrors.startTime || !newErrors.endDate){
+  if (!newErrors.startTime && !newErrors.endDate){
     let duration =  Math.floor(Math.abs(endTime - startTime) / 36e5)
     if (duration < 1 ){newErrors.endDate = 'Duration cannot be less than 1h' }
     else if (duration > 96) {newErrors.endDate = 'Duration cannot be more than 4 days' }
   }
-  if (!candidates || candidates.length ===  0) newErrors.candidates = 'Cannot be blank';
+  if (!candidates || candidates.length ===  0) newErrors.candidates = 'Candidates cannot be blank';
 
   return newErrors;
 };
@@ -58,13 +57,26 @@ function CreateElection() {
   const [startDate, setStartDate] = React.useState(dayjs(new Date()));
   const [endDate, setEndDate] = React.useState(dayjs(addHours(new Date(), 1)));
   const [newListItem, setNewListItem] = React.useState([]);
-  const [showError,setShowError] = React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
+  const [candidateInputValue, setCandidateInputValue] = React.useState('');
+
+
   const { promiseInProgress } = usePromiseTracker()
 
   const input = React.useRef();
 
+
+  
+
+  const handleCandidateInputChange = event => {
+      const filteredValue = event.target.value.replace(/[^A-Za-z]/g, '');
+      setCandidateInputValue(filteredValue);
+  };
+  
+
   const setField = (field, value) => {
-    
+  
     setForm({
       ...form,
       [field]: value
@@ -79,17 +91,17 @@ function CreateElection() {
 
   var addToList = e => {
     e.preventDefault();
-    if (!newListItem.includes( input.current.value) && input.current.value !=='' ){
-      setNewListItem([...newListItem, input.current.value]);
-      setForm({
-        ...form,
-        candidates: [...newListItem, input.current.value]
-      });
+    if (!newListItem.includes(candidateInputValue) && candidateInputValue !== '') {
+        setNewListItem([...newListItem, candidateInputValue]);
+        setForm({
+            ...form,
+            candidates: [...newListItem, candidateInputValue]
+        });
 
-      input.current.value = ''
+        setCandidateInputValue(''); // Reset the input value
     }
-    
-  };
+};
+
   const removeFromList = item => {
     const updatedList = newListItem.filter(ele => ele !== item);
     setNewListItem(updatedList);
@@ -101,11 +113,10 @@ const handleSubmit = e => {
     const newErrors = findFormErrors(form);
     if (Object.keys(newErrors).length > 0) {
       
-      setErrors(newErrors);
-      setShowError(true)
+      setAlertMessage(newErrors.election || newErrors.startTime || newErrors.endDate || newErrors.candidates);
+      setShowAlert(true);
     } else {
-      //if(){
-      //blockcahin fetch works
+    
 
       var start = Math.floor(form.startTime.getTime() / 1000)
       var duration = Math.floor(Math.abs(form.startTime.getTime() - form.endTime.getTime())/1000)
@@ -118,9 +129,10 @@ const handleSubmit = e => {
       }).catch(error => {
         // Handle the error
         console.error(error);
+        setAlertMessage(error.message || "Ocurrió un error al crear la elección.");
+        setShowAlert(true);
       }))
-      //}else{}
-      //redirect to home page with notifcation
+    
     }
   };
 
@@ -135,9 +147,10 @@ const handleSubmit = e => {
   };
   if(!promiseInProgress){
   return (
-    <Container>
-      
+    <Container >
       <h1 className='mb-3'>Election creation</h1>
+      <Row className="justify-content-center">
+        <Col xs={10} md={6}> 
 
     <Form className="reduceForm">
       <Form.Group className="mb-3" controlid="election">
@@ -192,8 +205,8 @@ const handleSubmit = e => {
       <Form.Group className="mb-3" controlid="formCandidates">
         <Form.Label>Candidates: </Form.Label>
         <InputGroup className="mb-3" controlid="candidates"  >
-          <Form.Control type="text" ref={input} placeholder="Enter Candidate" data-testid="create-election-candidates" />
-          <Button type="submit " onClick={addToList}>Add to List</Button>
+          <Form.Control type="text" ref={input} placeholder="Enter Candidate" data-testid="create-election-candidates"  value={candidateInputValue} onChange={handleCandidateInputChange}   />
+          <Button type="submit" onClick={addToList}>Add to List</Button>
         </InputGroup>
         <ul>
         {newListItem.map((item, b) => (
@@ -211,7 +224,14 @@ const handleSubmit = e => {
         Submit
       </Button>
     </Form>
-    {((Object.keys(errors).length > 0) &&  <AlertMessage message={JSON.stringify(errors)} show={showError} setShow={setShowError} />)}
+
+    <AlertMessage 
+            message={alertMessage} 
+            show={showAlert} 
+            setShow={setShowAlert} 
+        />
+        </Col>
+      </Row>
    </Container>
   );
     }else{

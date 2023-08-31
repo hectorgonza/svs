@@ -3,7 +3,7 @@ import CreateElection from './Views/CreateElection';
 import Home from './Views/Home';
 import NotFound from './Views/NotFound';
 import LoginPage from './Metamask/LoginPage';
-import Elections from './Views/Elections';
+import Vote from './Views/Vote';
 import ElectionVote from './Views/ElectionVote';
 import ResultMenu from './Views/ResultMenu';
 import ResultsElection from './Views/ResultsElection';
@@ -21,7 +21,7 @@ export default function App() {
         
         <Route path="/election" element={<PrivateRoute  element={<CreateElection/>}/>} />
 
-        <Route path="/vote" element={<PrivateRoute  element={<Elections/>}/>} />
+        <Route path="/vote" element={<PrivateRoute  element={<Vote/>}/>} />
         <Route path="/vote/:address" element={<PrivateRoute  element={<ElectionVote/>}/>} />
 
         <Route path="/results" element={<PrivateRoute  element={<ResultMenu/>}/>} />

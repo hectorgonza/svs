@@ -29,3 +29,7 @@ li{
   padding-left: 5px;
 
 }
+.not-found-card {
+  background: rgba(128, 0, 128, 0.2); /* Semi-transparent purple */
+  backdrop-filter: blur(5px);  /* Blurry effect */
+}

@@ -7,7 +7,7 @@ import { getCandidates } from '../Contracts/Election';
 import Loading from '../utils/Loading'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-
+import AlertMessage from '../utils/Alert';
 const defaultdata = {
     labels: [],
     datasets: [
@@ -36,10 +36,11 @@ const defaultdata = {
   };
 function ResultsElection (){
 
-    const  address = useParams().address
-    const { promiseInProgress } = usePromiseTracker()
+   const  address = useParams().address
+   const { promiseInProgress } = usePromiseTracker()
    const [data,setData] = React.useState(defaultdata)
-    
+   const [showAlert, setShowAlert] = React.useState(false);
+   const [alertMessage, setAlertMessage] = React.useState("");
     
     ChartJS.register(ArcElement, Tooltip, Legend);
     
@@ -50,7 +51,7 @@ function ResultsElection (){
         trackPromise(getCandidates(address).then(response => {
             let cand = []
             let votes = []
-
+            console.log(response)
             response[0].map( candidate => {
                 
                 cand.push(candidate[0])
@@ -63,27 +64,36 @@ function ResultsElection (){
             aux.datasets[0].data = votes;
             setData(aux)
             console.log(data)
+        }).catch(error => {
+          // Handle the error
+          console.error(error);
+          setAlertMessage(error.message || "Error occurred while voting.");
+          setShowAlert(true);
         }))
          
       }, []);
     
-    if(!promiseInProgress){
+      if(!promiseInProgress){
         return (
             <Container>
-            <h1 className='mb-3'> Results of the Election </h1>
+                <h1 className='mb-3'> Results of the Election: </h1>
 
-            <Container style={{width: '600px'}}>
-              <Doughnut data={data}  options={{
-              responsive: true,
-              maintainAspectRatio: true,
-               }}/>
+                <Container style={{width: '90%', height: '400px'}}>
+                    <Doughnut data={data}  options={{ 
+                        responsive: true, 
+                        maintainAspectRatio: false 
+                    }}/>
+                </Container>
+                <AlertMessage 
+                    message={alertMessage} 
+                    show={showAlert} 
+                    setShow={setShowAlert} 
+                />
             </Container>
-        </Container>
-            )
-    }else{
-
-        return   <Loading></Loading>
-
+        )
+    }
+    else {
+        return <Loading></Loading>
     }
     
     
